@@ -1,0 +1,12 @@
+{
+    "specversion" : "1.0",
+    "type" : "com.github.pull_request.merged",
+    "source" : "https://github.com/cloudevents/spec/pull",
+    "subject" : "123",
+    "id" : "A234-1234-1235",
+    "time" : "2018-04-05T17:32:00Z",
+    "thing1" : "value",
+    "x-stuff" : 5,
+    "datacontenttype" : "text/xml",
+    "data" : "<much wow=\"xml\"/>"
+}
