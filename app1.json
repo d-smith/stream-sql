@@ -1,0 +1,114 @@
+{
+    "ApplicationName": "a1",
+    "ApplicationDescription": "sample app",
+    "RuntimeEnvironment": "SQL-1_0",
+    "ServiceExecutionRole":"arn:aws:iam::123412341234:role/service-role/kinesis-analytics-a1-us-east-1",
+    "ApplicationConfiguration": {
+        "SqlApplicationConfiguration": {
+            "Inputs": [
+                {
+                    "NamePrefix": "SOURCE_SQL_STREAM",
+                    
+                    "KinesisStreamsInput": {
+                        "ResourceARN": "arn:aws:kinesis:us-east-1:123412341234:stream/s1"
+                    },
+                    "InputParallelism": {
+                        "Count": 1
+                    },
+                    "InputSchema": {
+                        "RecordFormat": {
+                            "RecordFormatType": "JSON",
+                            "MappingParameters": {
+                                "JSONMappingParameters": {
+                                    "RecordRowPath": "$"
+                                }
+                            }
+                        },
+                        "RecordEncoding": "UTF-8",
+                        "RecordColumns": [
+                            {
+                                "Name": "specversion",
+                                "Mapping": "$.specversion",
+                                "SqlType": "DECIMAL(1,1)"
+                            },
+                            {
+                                "Name": "type",
+                                "Mapping": "$.type",
+                                "SqlType": "VARCHAR(32)"
+                            },
+                            {
+                                "Name": "source",
+                                "Mapping": "$.source",
+                                "SqlType": "VARCHAR(64)"
+                            },
+                            {
+                                "Name": "subject",
+                                "Mapping": "$.subject",
+                                "SqlType": "INTEGER"
+                            },
+                            {
+                                "Name": "id",
+                                "Mapping": "$.id",
+                                "SqlType": "VARCHAR(16)"
+                            },
+                            {
+                                "Name": "COL_time",
+                                "Mapping": "$.time",
+                                "SqlType": "VARCHAR(32)"
+                            },
+                            {
+                                "Name": "thing1",
+                                "Mapping": "$.thing1",
+                                "SqlType": "VARCHAR(8)"
+                            },
+                            {
+                                "Name": "COL_xstuff",
+                                "Mapping": "$.x-stuff",
+                                "SqlType": "INTEGER"
+                            },
+                            {
+                                "Name": "datacontenttype",
+                                "Mapping": "$.datacontenttype",
+                                "SqlType": "VARCHAR(8)"
+                            },
+                            {
+                                "Name": "data",
+                                "Mapping": "$.data",
+                                "SqlType": "VARCHAR(32)"
+                            },
+                            {
+                                "Name": "comexampleextension1",
+                                "Mapping": "$.comexampleextension1",
+                                "SqlType": "VARCHAR(8)"
+                            },
+                            {
+                                "Name": "comexampleothervalue",
+                                "Mapping": "$.comexampleothervalue",
+                                "SqlType": "INTEGER"
+                            }
+                        ]
+                    }
+                }
+            ],
+            "Outputs": [
+                {
+                    "Name": "DESTINATION_SQL_STREAM",
+                    "KinesisStreamsOutput": {
+                        "ResourceARN": "arn:aws:kinesis:us-east-1:123412341234:stream/s2"
+                    },
+                    "DestinationSchema": {
+                        "RecordFormatType": "CSV"
+                    }
+                }
+            ]
+            
+        },
+        "ApplicationCodeConfiguration": {
+            "CodeContent": {
+                "TextContent": "/**\n * Welcome to the SQL editor\n * =========================\n * \n * The SQL code you write here will continuously transform your streaming data\n * when your application is running.\n *\n * Get started by clicking \"Add SQL from templates\" or pull up the\n * documentation and start writing your own custom queries.\n */\n\nCREATE OR REPLACE STREAM \"DESTINATION_SQL_STREAM\" (type varchar(32), event_count integer);\nCREATE OR REPLACE  PUMP \"STREAM_PUMP\" AS INSERT INTO \"DESTINATION_SQL_STREAM\"\nSELECT STREAM \"type\", COUNT(*) AS \"event_count\"\nFROM \"SOURCE_SQL_STREAM_001\"\n-- Uses a 10-second tumbling time window\nGROUP BY \"type\", FLOOR((\"SOURCE_SQL_STREAM_001\".ROWTIME - TIMESTAMP '1970-01-01 00:00:00') SECOND / 10 TO SECOND);\n"
+            },
+            "CodeContentType": "PLAINTEXT"
+        }
+    }
+}
+

@@ -214,3 +214,16 @@ com.github.pull_request.merged,2
 
 
 
+## command line
+
+Generate a json skeleton for the config, e.g.
+
+```
+aws kinesisanalyticsv2 create-application --generate-cli-skeleton
+```
+
+This was used to generate the content in app1.json. Next, fill in the skeleton and create the app.
+
+```
+aws kinesisanalyticsv2 create-application --cli-input-json file://app1.json
+```
